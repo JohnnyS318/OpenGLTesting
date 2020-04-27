@@ -45,7 +45,7 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
 		}
 	}
 
-    return { ss[0].str(), ss[0].str() };
+    return { ss[0].str(), ss[1].str() };
 }
 
 static unsigned int CompileShader(unsigned int type, std::string& source)
@@ -67,7 +67,7 @@ static unsigned int CompileShader(unsigned int type, std::string& source)
         char* message = (char*)alloca(length * sizeof(char));
 
         glGetShaderInfoLog(id, length, &length, message);
-        std::cout << "Failed to compile the shader" << std::endl;
+        std::cout << "Failed to compile the shader " << (type == GL_VERTEX_SHADER ? "vertext" : "fragment") << std::endl;
         std::cout << message << std::endl;
         glDeleteShader(id);
 
@@ -141,14 +141,9 @@ int main(void)
 
 
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
-    std::cout << "Vertex: " << std::endl;
-    std::cout << source.VertexSource << std::endl;
-    std::cout << "Fragment: " << std::endl;
-    std::cout << source.FragmentSource << std::endl;
 	
-	
-    //unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-    //glUseProgram(shader);
+    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+    glUseProgram(shader);
 
 	
     /* Loop until the user closes the window */
@@ -166,7 +161,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    //glDeleteProgram(shader);
+    glDeleteProgram(shader);
 	
     glfwTerminate();
     return 0;
