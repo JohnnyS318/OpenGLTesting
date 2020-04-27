@@ -11,8 +11,9 @@
 #include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
-int main(void)
+  int main(void)
 {
     GLFWwindow* window;
 
@@ -46,10 +47,10 @@ int main(void)
 
     {
         float positions[] = {
-            -0.5f, -0.5f,
-            0.5f, -0.5f,
-            0.5f, 0.5f,
-            -0.5f, 0.5f,
+            -0.5f, -0.5f, 0.0f, 0.0f,
+            0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f, 0.5f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
@@ -58,8 +59,9 @@ int main(void)
         };
     	
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
@@ -67,11 +69,13 @@ int main(void)
 
         Shader shader("res/shaders/basic.shader");
         shader.Bind();
-
         const char* colorName= "u_Color";
-    	
     	shader.SetUniform4f(colorName, 0.8F, 0.3f, 0.8f, 1.0f);
 
+        Texture texture("res/textures/logo.jpg");
+        texture.Bind(0);
+        shader.SetUniform1i("u_Texture", 0);
+    	
         va.Unbind();
         vb.Unbind();
         ib.Unbind();
@@ -86,7 +90,6 @@ int main(void)
         {
             renderer.Clear();
             shader.Bind();
-            shader.SetUniform4f(colorName, r, 0.3f, 0.8f, 1.0f);
         	
             renderer.Draw(va, ib, shader);
 
@@ -97,10 +100,7 @@ int main(void)
                 increment = 0.05f;
             r += increment;
 
-            /* Swap front and back buffers */
             glfwSwapBuffers(window);
-
-            /* Poll for and process events */
             glfwPollEvents();
         }
 
