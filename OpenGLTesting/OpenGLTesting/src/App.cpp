@@ -118,26 +118,36 @@ int main(void)
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-    float positions[6] = {
+    float positions[] = {
         -0.5f, -0.5f,
-    	0.0f, 0.5f,
-    	0.5f, -0.5f
+    	0.5f, -0.5f,
+    	0.5f, 0.5f,
+        -0.5f, 0.5f,
     };
 	
-    unsigned int buffer;
+    unsigned int indicies[] = {
+        0,1,2,
+        2,3,0
+    };
 
+    unsigned int buffer;
 	// Generate vertex buffer with the buffer id.
     glGenBuffers(1, &buffer);
-
 	// Select the buffer. Lets us use the buffer as an array
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
 	// Enable the position vertex attribute
     glEnableVertexAttribArray(0);
 	// define the layout of the position vertex attribute;
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
+    unsigned int ibo;
+    // Generate vertex buffer with the buffer id.
+    glGenBuffers(1, &ibo);
+    // Select the buffer. Lets us use the buffer as an array
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indicies, GL_STATIC_DRAW);
 
 
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
@@ -152,7 +162,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
