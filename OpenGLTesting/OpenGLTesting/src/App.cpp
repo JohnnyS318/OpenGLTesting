@@ -26,7 +26,7 @@
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World of OpenGl.", NULL, NULL);
+    window = glfwCreateWindow(1000, 1000, "Hello World of OpenGl.", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -47,16 +47,19 @@
 
     {
         float positions[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-            0.5f, -0.5f, 1.0f, 0.0f,
-            0.5f, 0.5f, 1.0f, 1.0f,
-            -0.5f, 0.5f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f,
+            1.0f, -1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, 0.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
             0,1,2,
             2,3,0
         };
+
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     	
         VertexArray va;
         VertexBuffer vb(positions, 4 * 4 * sizeof(float));
@@ -72,8 +75,8 @@
         const char* colorName= "u_Color";
     	shader.SetUniform4f(colorName, 0.8F, 0.3f, 0.8f, 1.0f);
 
-        Texture texture("res/textures/logo.jpg");
-        texture.Bind(0);
+        Texture texture("res/textures/logo.png");
+        texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
     	
         va.Unbind();
@@ -90,7 +93,6 @@
         {
             renderer.Clear();
             shader.Bind();
-        	
             renderer.Draw(va, ib, shader);
 
             if (r > 1.0f) {
