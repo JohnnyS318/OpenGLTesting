@@ -75,7 +75,7 @@
         const char* colorName= "u_Color";
     	shader.SetUniform4f(colorName, 0.8F, 0.3f, 0.8f, 1.0f);
 
-        Texture texture("res/textures/logo.png");
+        Texture texture("res/textures/logo.jpg");
         texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
     	
